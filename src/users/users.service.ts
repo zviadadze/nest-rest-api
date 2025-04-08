@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { PatchUserDto, UserDto } from './dto';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async getUser(userId: number): Promise<UserDto> {
@@ -16,10 +16,20 @@ export class UserService {
     return new UserDto(user);
   }
 
-  //   async patchUser(
-  //     userId: number,
-  //     patchUserDto: PatchUserDto,
-  //   ): Promise<UserDto> {}
+  async patchUser(
+    userId: number,
+    patchUserDto: PatchUserDto,
+  ): Promise<UserDto> {
+    const user = await this.prismaService.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        ...patchUserDto,
+      },
+    });
+    return new UserDto(user);
+  }
 
   //   async deleteUser(userId: number): Promise<UserDto> {}
 }

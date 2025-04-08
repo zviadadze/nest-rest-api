@@ -32,9 +32,9 @@ export class PatchUserDto {
 
   @IsString()
   @IsOptional()
-  firstName?: String;
+  firstName?: string;
 
   @IsString()
   @IsOptional()
-  lastName?: String;
+  lastName?: string;
 }
