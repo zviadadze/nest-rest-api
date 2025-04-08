@@ -14,7 +14,7 @@ export class PrismaService extends PrismaClient {
     });
   }
 
-  public cleanDb(): Promise<[Prisma.BatchPayload, Prisma.BatchPayload]> {
+  cleanDb(): Promise<[Prisma.BatchPayload, Prisma.BatchPayload]> {
     return this.$transaction([
       this.bookmark.deleteMany(),
       this.user.deleteMany(),

@@ -14,8 +14,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
-
-  public async register(authDto: AuthDto): Promise<RegisterResponseDto> {
+  async register(authDto: AuthDto): Promise<RegisterResponseDto> {
     try {
       const hash = await argon.hash(authDto.password);
       const user = await this.prismaService.user.create({
@@ -41,7 +40,7 @@ export class AuthService {
     }
   }
 
-  public async login(authDto: AuthDto): Promise<LoginResponseDto> {
+  async login(authDto: AuthDto): Promise<LoginResponseDto> {
     const user = await this.prismaService.user.findUnique({
       where: { email: authDto.email },
     });
