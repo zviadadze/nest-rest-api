@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PatchUserDto, UserDto } from './dto';
 
@@ -20,7 +24,7 @@ export class UsersService {
     userId: number,
     patchUserDto: PatchUserDto,
   ): Promise<UserDto> {
-    const user = await this.prismaService.user.update({
+    const patchedUser = await this.prismaService.user.update({
       where: {
         id: userId,
       },
@@ -28,8 +32,19 @@ export class UsersService {
         ...patchUserDto,
       },
     });
-    return new UserDto(user);
+    return new UserDto(patchedUser);
   }
 
-  //   async deleteUser(userId: number): Promise<UserDto> {}
+  async deleteUser(userId: number): Promise<UserDto> {
+    const userToDelete = await this.prismaService.user.findUnique({
+      where: { id: userId },
+    });
+    if (!userToDelete) {
+      throw new NotFoundException();
+    }
+    const deletedUser = await this.prismaService.user.delete({
+      where: { id: userId },
+    });
+    return new UserDto(deletedUser);
+  }
 }

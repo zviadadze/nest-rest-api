@@ -29,8 +29,8 @@ export class UsersController {
     return this.usersService.patchUser(userId, patchUserDto);
   }
 
-  // @Delete('me')
-  // async deleteMe(@CurrentUser('id') userId): Promise<UserDto> {
-  //   return this.usersService.deleteUser(userId);
-  // }
+  @Delete('me')
+  async deleteMe(@CurrentUser('id') userId): Promise<UserDto> {
+    return this.usersService.deleteUser(userId);
+  }
 }
