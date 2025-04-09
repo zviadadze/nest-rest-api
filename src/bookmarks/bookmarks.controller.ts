@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guards';
 import { BookmarksService } from './bookmarks.service';
-import { CurrentUser } from 'src/auth/decorators';
+import { User } from 'src/auth/decorators';
 import { CreateBookmarkDto, PatchBookmarkDto } from './dto';
 import { Bookmark } from '@prisma/client';
 
@@ -25,20 +25,20 @@ export class BookmarksController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   createBookmark(
-    @CurrentUser('id') userId: number,
+    @User('id') userId: number,
     @Body() createBookmarkDto: CreateBookmarkDto,
   ) {
     return this.bookmarksService.createBookmark(userId, createBookmarkDto);
   }
 
   @Get()
-  getBookmarks(@CurrentUser('id') userId: number) {
+  getBookmarks(@User('id') userId: number) {
     return this.bookmarksService.getBookmarks(userId);
   }
 
   @Get(':id')
   getBookmark(
-    @CurrentUser('id') userId: number,
+    @User('id') userId: number,
     @Param('id', ParseIntPipe) bookmarkId: number,
   ): Promise<Bookmark | null> {
     return this.bookmarksService.getBookmark(userId, bookmarkId);
@@ -46,7 +46,7 @@ export class BookmarksController {
 
   @Patch(':id')
   patchBookmark(
-    @CurrentUser('id') userId: number,
+    @User('id') userId: number,
     @Param('id', ParseIntPipe) bookmarkId: number,
     @Body() patchBookmarkDto: PatchBookmarkDto,
   ) {
@@ -60,7 +60,7 @@ export class BookmarksController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteBookmark(
-    @CurrentUser('id') userId: number,
+    @User('id') userId: number,
     @Param('id', ParseIntPipe) bookmarkId: number,
   ) {
     return this.bookmarksService.deleteBookmark(userId, bookmarkId);

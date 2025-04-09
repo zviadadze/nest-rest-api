@@ -4,7 +4,8 @@ import { AuthDto, RegisterResponseDto, LoginResponseDto } from './dto';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from './types';
+import { JwtPayload, AuthUser } from './types';
+import { use } from 'passport';
 
 @Injectable()
 export class AuthService {
@@ -17,13 +18,13 @@ export class AuthService {
       const hash = await argon.hash(authDto.password);
       const user = await this.prismaService.user.create({
         data: {
-          email: authDto.email,
+          username: authDto.username,
           password: hash,
         },
       });
       const response: RegisterResponseDto = {
         id: user.id,
-        email: user.email,
+        username: user.username,
         createdAt: user.createdAt,
       };
       return response;
@@ -38,22 +39,34 @@ export class AuthService {
     }
   }
 
-  async login(authDto: AuthDto): Promise<LoginResponseDto> {
-    const user = await this.prismaService.user.findUnique({
-      where: { email: authDto.email },
-    });
-    if (!user) {
-      throw new ForbiddenException();
-    }
-    const isMatch = await argon.verify(user.password, authDto.password);
-    if (!isMatch) {
-      throw new ForbiddenException();
-    }
+  async login(user: AuthUser): Promise<LoginResponseDto> {
     const payload: JwtPayload = {
       sub: user.id,
+      username: user.username,
     };
-    const accessToken = await this.jwtService.signAsync(payload);
-    const response: LoginResponseDto = { accessToken };
+    const access_token = await this.jwtService.signAsync(payload);
+    const response: LoginResponseDto = { access_token };
     return response;
+  }
+
+  async validateUser(
+    username: string,
+    password: string,
+  ): Promise<AuthUser | null> {
+    const user = await this.prismaService.user.findUnique({
+      where: { username },
+    });
+    if (!user) {
+      return null;
+    }
+    const isMatch = await argon.verify(user.password, password);
+    if (!isMatch) {
+      throw null;
+    }
+    const validatedUser: AuthUser = {
+      id: user.id,
+      username: user.username,
+    };
+    return validatedUser;
   }
 }

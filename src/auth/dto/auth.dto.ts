@@ -3,7 +3,7 @@ import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 export class AuthDto {
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  username: string;
 
   @IsString()
   @IsNotEmpty()
@@ -12,10 +12,10 @@ export class AuthDto {
 
 export class RegisterResponseDto {
   id: number;
-  email: string;
+  username: string;
   createdAt: Date;
 }
 
 export class LoginResponseDto {
-  accessToken: string;
+  access_token: string;
 }

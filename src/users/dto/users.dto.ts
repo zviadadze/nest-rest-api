@@ -6,7 +6,7 @@ export class UserDto {
   id: number;
 
   @Expose()
-  email: string;
+  username: string;
 
   @Expose()
   firstName: string | null;
@@ -28,7 +28,7 @@ export class UserDto {
 export class PatchUserDto {
   @IsEmail()
   @IsOptional()
-  email?: string;
+  username?: string;
 
   @IsString()
   @IsOptional()

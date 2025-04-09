@@ -54,11 +54,11 @@ describe('App e2e test', () => {
 
   describe('auth', () => {
     const authDto: AuthDto = {
-      email: 'test@test.com',
+      username: 'test@test.com',
       password: 'test',
     };
 
-    describe('register', () => {
+    describe('POST register', () => {
       it('should register new user', () => {
         return pactum
           .spec()
@@ -67,7 +67,7 @@ describe('App e2e test', () => {
           .expectStatus(HttpStatus.CREATED);
       });
 
-      it('should return forbidden when email taken', () => {
+      it('should return forbidden when username taken', () => {
         return pactum
           .spec()
           .post('auth/register')
@@ -76,34 +76,34 @@ describe('App e2e test', () => {
       });
     });
 
-    describe('login', () => {
+    describe('POST login', () => {
       it('should login', () => {
         return pactum
           .spec()
           .post('auth/login')
           .withBody(authDto)
           .expectStatus(HttpStatus.OK)
-          .stores('accessToken', 'accessToken');
+          .stores('access_token', 'access_token');
       });
 
       it('should return forbidden when password not valid', () => {
         return pactum
           .spec()
           .post('auth/login')
-          .withBody({ email: 'test@test.com', password: 'invalid-password' })
-          .expectStatus(HttpStatus.FORBIDDEN);
+          .withBody({ username: 'test@test.com', password: 'invalid-password' })
+          .expectStatus(HttpStatus.UNAUTHORIZED);
       });
     });
   });
 
   describe('users', () => {
-    describe('get me', () => {
+    describe('GET me', () => {
       it('should return current user information', () => {
         return pactum
           .spec()
           .get('users/me')
           .withHeaders({
-            Authorization: `Bearer $S{accessToken}`,
+            Authorization: `Bearer $S{access_token}`,
           })
           .expectStatus(HttpStatus.OK);
       });
@@ -127,7 +127,7 @@ describe('App e2e test', () => {
           .spec()
           .get('users/me')
           .withHeaders({
-            Authorization: `Bearer $S{accessToken}`,
+            Authorization: `Bearer $S{access_token}`,
           })
           .expectStatus(HttpStatus.OK)
           .returns('password');
@@ -135,13 +135,13 @@ describe('App e2e test', () => {
       });
     });
 
-    describe('patch me', () => {
+    describe('PATCH me', () => {
       it('should patch current user information', () => {
         return pactum
           .spec()
           .patch('users/me')
           .withHeaders({
-            Authorization: `Bearer $S{accessToken}`,
+            Authorization: `Bearer $S{access_token}`,
           })
           .withBody({ lastName: 'Spontania' })
           .expectStatus(HttpStatus.OK)
@@ -160,7 +160,7 @@ describe('App e2e test', () => {
           .spec()
           .patch('users/me')
           .withHeaders({
-            Authorization: `Bearer $S{accessToken}`,
+            Authorization: `Bearer $S{access_token}`,
           })
           .expectStatus(HttpStatus.OK)
           .returns('password');
@@ -170,18 +170,18 @@ describe('App e2e test', () => {
   });
 
   describe('bookmarks', () => {
-    describe('get bookmarks', () => {
+    describe('GET bookmarks', () => {
       it('should get empty bookmarks array', () => {
         return pactum
           .spec()
           .get('bookmarks')
-          .withHeaders({ Authorization: 'Bearer $S{accessToken}' })
+          .withHeaders({ Authorization: 'Bearer $S{access_token}' })
           .expectStatus(HttpStatus.OK)
           .expectJsonLength(0);
       });
     });
 
-    describe('create bookmark', () => {
+    describe('POST bookmarks', () => {
       const createBookmarkDto: CreateBookmarkDto = {
         title: 'Google Translate',
         link: 'https://translate.google.com',
@@ -191,37 +191,37 @@ describe('App e2e test', () => {
         return pactum
           .spec()
           .post('bookmarks')
-          .withHeaders({ Authorization: 'Bearer $S{accessToken}' })
+          .withHeaders({ Authorization: 'Bearer $S{access_token}' })
           .withBody(createBookmarkDto)
           .expectStatus(HttpStatus.CREATED)
           .stores('bookmarkId', 'id');
       });
     });
 
-    describe('get bookmarks', () => {
+    describe('GET bookmarks', () => {
       it('should get bookmarks array', () => {
         return pactum
           .spec()
           .get('bookmarks')
-          .withHeaders({ Authorization: 'Bearer $S{accessToken}' })
+          .withHeaders({ Authorization: 'Bearer $S{access_token}' })
           .expectStatus(HttpStatus.OK)
           .expectJsonLength(1);
       });
     });
 
-    describe('get bookmark', () => {
+    describe('GET bookmarks/:id', () => {
       it('should get bookmark', () => {
         return pactum
           .spec()
           .get('bookmarks/{id}')
           .withPathParams('id', '$S{bookmarkId}')
-          .withHeaders({ Authorization: 'Bearer $S{accessToken}' })
+          .withHeaders({ Authorization: 'Bearer $S{access_token}' })
           .expectStatus(HttpStatus.OK)
           .expectJson('id', '$S{bookmarkId}');
       });
     });
 
-    describe('patch bookmark', () => {
+    describe('PATCH bookmarks/:id', () => {
       const description = 'Google Translate Description';
       const patchBookmarkDto: PatchBookmarkDto = {
         description,
@@ -232,20 +232,20 @@ describe('App e2e test', () => {
           .spec()
           .patch('bookmarks/{id}')
           .withPathParams('id', '$S{bookmarkId}')
-          .withHeaders({ Authorization: 'Bearer $S{accessToken}' })
+          .withHeaders({ Authorization: 'Bearer $S{access_token}' })
           .withBody(patchBookmarkDto)
           .expectStatus(HttpStatus.OK)
           .expectJson('description', description);
       });
     });
 
-    describe('delete bookmark', () => {
+    describe('DELETE bookmarks/:id', () => {
       it('should delete bookmark', () => {
         return pactum
           .spec()
           .delete('bookmarks/{id}')
           .withPathParams('id', '$S{bookmarkId}')
-          .withHeaders({ Authorization: 'Bearer $S{accessToken}' })
+          .withHeaders({ Authorization: 'Bearer $S{access_token}' })
           .expectStatus(HttpStatus.NO_CONTENT);
       });
 
@@ -253,7 +253,7 @@ describe('App e2e test', () => {
         return pactum
           .spec()
           .get('bookmarks')
-          .withHeaders({ Authorization: 'Bearer $S{accessToken}' })
+          .withHeaders({ Authorization: 'Bearer $S{access_token}' })
           .expectStatus(HttpStatus.OK)
           .expectJsonLength(0);
       });
