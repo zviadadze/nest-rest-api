@@ -6,9 +6,9 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123
-      POSTGRES_DB: nest_playground
+      POSTGRES_DB: dev
     networks:
-      - nest-playground-bridge
+      - network
 
   test-db:
     image: postgres:13
@@ -17,9 +17,9 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123
-      POSTGRES_DB: nest_playground
+      POSTGRES_DB: test
     networks:
-      - nest-playground-bridge
+      - network
 
 networks:
-  nest-playground-bridge:
+  network:
