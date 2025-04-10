@@ -17,7 +17,7 @@ export class UsersService {
     if (!user) {
       throw new BadRequestException();
     }
-    return new UserDto(user);
+    return user;
   }
 
   async patchUser(
@@ -32,7 +32,7 @@ export class UsersService {
         ...patchUserDto,
       },
     });
-    return new UserDto(patchedUser);
+    return patchedUser;
   }
 
   async deleteUser(userId: number): Promise<UserDto> {
@@ -45,6 +45,6 @@ export class UsersService {
     const deletedUser = await this.prismaService.user.delete({
       where: { id: userId },
     });
-    return new UserDto(deletedUser);
+    return deletedUser;
   }
 }

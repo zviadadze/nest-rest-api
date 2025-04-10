@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Patch,
+  SerializeOptions,
   UseGuards,
 } from '@nestjs/common';
 import { User } from 'src/auth/decorators';
@@ -13,6 +14,7 @@ import { PatchUserDto, UserDto } from './dto';
 
 @Controller('users')
 @UseGuards(JwtGuard)
+@SerializeOptions({ type: UserDto })
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
